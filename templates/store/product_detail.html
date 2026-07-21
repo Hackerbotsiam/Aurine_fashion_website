@@ -1,0 +1,132 @@
+
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}{{ product.name }} — VELORA{% endblock %}
+
+{% block extra_head %}
+<style>
+    .detail-container { padding: 40px 0 80px; }
+    .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; }
+    
+    .detail-img-box {
+        width: 100%;
+        height: 540px;
+        border-radius: 20px;
+        overflow: hidden;
+        background: #F0EFEA;
+        border: 1px solid var(--border-color);
+    }
+
+    .detail-img { width: 100%; height: 100%; object-fit: cover; }
+    .detail-title { font-family: var(--font-serif); font-size: 42px; font-weight: 700; margin-bottom: 12px; }
+    .detail-price { font-size: 28px; font-weight: 700; color: var(--sage-primary); margin-bottom: 24px; }
+    .detail-desc { font-size: 15px; color: var(--text-muted); line-height: 1.7; margin-bottom: 30px; }
+
+    .size-selector { display: flex; gap: 12px; margin-bottom: 30px; }
+
+    .size-option-btn {
+        padding: 10px 20px;
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        background: var(--card-bg);
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .size-option-btn.selected { border-color: var(--sage-primary); background: var(--sage-primary); color: white; }
+
+    .action-row { display: flex; gap: 16px; margin-bottom: 40px; }
+    
+    .qty-input {
+        width: 70px;
+        padding: 12px;
+        border-radius: 30px;
+        border: 1px solid var(--border-color);
+        text-align: center;
+        font-weight: 600;
+    }
+
+    .btn-add-cart {
+        flex: 1;
+        background: var(--sage-light);
+        color: var(--sage-primary);
+        border: 1px solid var(--sage-primary);
+        padding: 14px;
+        border-radius: 30px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .btn-buy-now {
+        flex: 1;
+        background: var(--sage-primary);
+        color: white;
+        padding: 14px;
+        border-radius: 30px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container detail-container">
+    <div class="detail-grid">
+        <!-- PRODUCT IMAGE -->
+        <div class="detail-img-box">
+            {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="detail-img">
+            {% else %}
+                <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=800&q=80" alt="{{ product.name }}" class="detail-img">
+            {% endif %}
+        </div>
+
+        <!-- DETAILS & ORDER FORM -->
+        <div>
+            <h1 class="detail-title">{{ product.name }}</h1>
+            <div class="detail-price">৳{{ product.price }} BDT</div>
+            <p class="detail-desc">{{ product.description }}</p>
+
+            <form action="{% url 'store:cart_add' product.id %}" method="POST">
+                {% csrf_token %}
+
+                <!-- SIZE SELECTOR -->
+                {% if product.sizes.all %}
+                    <label style="font-weight:600; margin-bottom:10px; display:block;">Select Size / Variant:</label>
+                    <div class="size-selector">
+                        {% for size_obj in product.sizes.all %}
+                            <label>
+                                <input type="radio" name="size" value="{{ size_obj.size_name }}" {% if forloop.first %}checked{% endif %} style="display:none;" onchange="updateSelectedSize(this)">
+                                <span class="size-option-btn {% if forloop.first %}selected{% endif %}">
+                                    {{ size_obj.size_name }}
+                                </span>
+                            </label>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <!-- QUANTITY & BUTTONS -->
+                <div class="action-row">
+                    <input type="number" name="quantity" value="1" min="1" max="10" class="qty-input">
+                    <button type="submit" class="btn-add-cart"><i class="fa-solid fa-bag-shopping"></i> Add to Cart</button>
+                    <a href="{% url 'store:messenger_checkout' %}" class="btn-buy-now" target="_blank">
+                        <i class="fa-brands fa-facebook-messenger"></i> Buy via Messenger
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function updateSelectedSize(radio) {
+        document.querySelectorAll('.size-option-btn').forEach(btn => btn.classList.remove('selected'));
+        radio.nextElementSibling.classList.add('selected');
+    }
+</script>
+{% endblock %}

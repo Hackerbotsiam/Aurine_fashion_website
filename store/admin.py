@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, Product, ProductSize
+from .models import Category, Product, ProductSize, HeroSlide
 
 class ProductSizeInline(admin.TabularInline):
     model = ProductSize
@@ -18,3 +18,9 @@ class ProductAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('name',)}
     search_fields = ['name', 'description']
     inlines = [ProductSizeInline] # <--- একই পেজে সাইজ যুক্ত করার অপশন
+
+@admin.register(HeroSlide)
+class HeroSlideAdmin(admin.ModelAdmin):
+    list_display = ['title', 'order', 'is_active']
+    list_editable = ['order', 'is_active']
+    search_fields = ['title', 'subtitle']

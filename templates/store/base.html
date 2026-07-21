@@ -1,0 +1,451 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AURINE — Clean Lines. Conscious Living.{% endblock %}</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #F6F5F2;
+            --card-bg: #FFFFFF;
+            --text-main: #1C211E;
+            --text-muted: #6B726E;
+            --sage-primary: #5D705C;
+            --sage-hover: #485947;
+            --sage-light: #EBF0EC;
+            --border-color: #E2E1DC;
+            --font-serif: 'Cormorant Garamond', serif;
+            --font-sans: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            line-height: 1.5;
+            overflow-x: hidden;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 24px 60px;
+            background: var(--bg-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 28px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-main);
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--sage-primary);
+        }
+
+        .brand-logo {
+            font-family: var(--font-serif);
+            font-size: 36px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--text-main);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .search-form {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-input {
+            padding: 8px 16px 8px 36px;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            background: var(--card-bg);
+            font-family: var(--font-sans);
+            font-size: 13px;
+            outline: none;
+            width: 180px;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            width: 240px;
+            border-color: var(--sage-primary);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .cart-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: var(--font-sans);
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-main);
+        }
+
+        .cart-badge {
+            background: var(--sage-primary);
+            color: white;
+            border-radius: 50%;
+            padding: 2px 8px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .container {
+            max-width: 1360px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        /* CART DRAWER OVERLAY */
+        .cart-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+            z-index: 999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .cart-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .cart-drawer {
+            position: fixed;
+            top: 0;
+            right: -450px;
+            width: 420px;
+            height: 100vh;
+            background: var(--card-bg);
+            z-index: 1000;
+            box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            padding: 24px;
+        }
+
+        .cart-drawer.active {
+            right: 0;
+        }
+
+        .cart-drawer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .cart-drawer-title {
+            font-family: var(--font-serif);
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .close-cart-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: var(--text-muted);
+        }
+
+        .cart-drawer-items {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 0;
+        }
+
+        .cart-item {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .cart-item-img {
+            width: 70px;
+            height: 85px;
+            object-fit: cover;
+            border-radius: 8px;
+            background: var(--bg-color);
+        }
+
+        .cart-item-details { flex: 1; }
+
+        .cart-item-title {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .cart-item-meta {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .cart-item-price {
+            font-weight: 700;
+            color: var(--sage-primary);
+        }
+
+        .remove-item-btn {
+            color: #d9534f;
+            font-size: 12px;
+            text-decoration: underline;
+            cursor: pointer;
+            border: none;
+            background: none;
+        }
+
+        .cart-drawer-footer {
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+        }
+
+        .cart-total-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .messenger-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            background: var(--sage-primary);
+            color: white;
+            padding: 16px;
+            border-radius: 30px;
+            font-size: 15px;
+            font-weight: 600;
+            transition: background 0.3s ease;
+        }
+
+        .messenger-btn:hover { background: var(--sage-hover); }
+
+        .bkash-note {
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 10px;
+        }
+
+        /* FOOTER */
+        footer {
+            background: #151A18;
+            color: #A3ACA7;
+            padding: 60px 40px 30px;
+            margin-top: 80px;
+        }
+
+        .footer-grid {
+            max-width: 1360px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1.5fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-brand {
+            font-family: var(--font-serif);
+            font-size: 32px;
+            color: white;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            font-size: 13px;
+        }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+    <!-- HEADER NAVIGATION -->
+    <header class="navbar">
+        <nav class="nav-links">
+            <a href="{% url 'store:product_list' %}">↗ New Arrivals</a>
+            <a href="{% url 'store:product_list' %}">↗ Shop</a>
+            <a href="{% url 'store:product_list_by_category' 'ladies-cloth' %}">↗ Ladies Cloth</a>
+            <a href="{% url 'store:product_list_by_category' 'perfume' %}">↗ Perfume</a>
+        </nav>
+
+        <a href="{% url 'store:product_list' %}" class="brand-logo">AURINE</a>
+
+        <div class="nav-actions">
+            <!-- Search Form -->
+            <form action="{% url 'store:product_list' %}" method="GET" class="search-form">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" name="q" value="{{ query|default:'' }}" placeholder="Search products..." class="search-input">
+            </form>
+
+            <a href="/admin/" style="font-size: 14px; font-weight: 500;"><i class="fa-regular fa-user"></i> Admin</a>
+            
+            <button class="cart-btn" onclick="toggleCartDrawer()">
+                <i class="fa-solid fa-bag-shopping"></i> Cart
+                <span class="cart-badge">{{ cart|length }}</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- SIDEBAR CART DRAWER -->
+    <div class="cart-overlay" id="cart-overlay" onclick="toggleCartDrawer()"></div>
+    <aside class="cart-drawer" id="cart-drawer">
+        <div class="cart-drawer-header">
+            <span class="cart-drawer-title">Your Cart ({{ cart|length }})</span>
+            <button class="close-cart-btn" onclick="toggleCartDrawer()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+
+        <div class="cart-drawer-items">
+            {% if cart|length > 0 %}
+                {% for item in cart %}
+                    <div class="cart-item">
+                        {% if item.product.image %}
+                            <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="cart-item-img">
+                        {% else %}
+                            <div class="cart-item-img" style="display:flex;align-items:center;justify-content:center;color:#aaa;"><i class="fa-solid fa-image"></i></div>
+                        {% endif %}
+                        <div class="cart-item-details">
+                            <div class="cart-item-title">{{ item.product.name }}</div>
+                            <div class="cart-item-meta">
+                                {% if item.size %}Size: {{ item.size }} | {% endif %}Qty: {{ item.quantity }}
+                            </div>
+                            <div class="cart-item-price">৳{{ item.total_price }}</div>
+                            <a href="{% url 'store:cart_remove' item.item_key %}" class="remove-item-btn">Remove</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div style="text-align:center; padding: 60px 0; color: var(--text-muted);">
+                    <i class="fa-solid fa-bag-shopping" style="font-size: 40px; margin-bottom: 16px; opacity: 0.4;"></i>
+                    <p>Your cart is empty.</p>
+                </div>
+            {% endif %}
+        </div>
+
+        {% if cart|length > 0 %}
+            <div class="cart-drawer-footer">
+                <div class="cart-total-row">
+                    <span>Subtotal:</span>
+                    <span>৳{{ cart.get_total_price }}</span>
+                </div>
+                <!-- Messenger Direct Checkout -->
+                <a href="{% url 'store:messenger_checkout' %}" class="messenger-btn" target="_blank">
+                    <i class="fa-brands fa-facebook-messenger" style="font-size: 20px;"></i>
+                    Buy on Messenger (bKash)
+                </a>
+                <p class="bkash-note">Order details will be sent to Facebook Messenger to complete bKash payment.</p>
+            </div>
+        {% endif %}
+    </aside>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-grid">
+            <div>
+                <div class="footer-brand">AURINE</div>
+                <p>Timeless essentials for the modern minimalist. Designed to simplify your wardrobe and elevate your everyday life.</p>
+            </div>
+            <div>
+                <div style="color:white; font-weight:600; margin-bottom:16px;">Categories</div>
+                <ul style="list-style:none;">
+                    <li style="margin-bottom:8px;"><a href="{% url 'store:product_list_by_category' 'ladies-cloth' %}">Ladies Cloth</a></li>
+                    <li><a href="{% url 'store:product_list_by_category' 'perfume' %}">Perfumes</a></li>
+                </ul>
+            </div>
+            <div>
+                <div style="color:white; font-weight:600; margin-bottom:16px;">Direct Order</div>
+                <p style="font-size:14px; margin-bottom: 12px;">Need custom assistance? Message us on Facebook for instant order placement.</p>
+                <a href="{% url 'store:messenger_checkout' %}" style="color: var(--sage-light); font-weight: 600; text-decoration: underline;" target="_blank">
+                    Message Us on Messenger →
+                </a>
+            </div>
+        </div>
+        <div class="copyright">&copy; 2026 AURINE Store. All rights reserved. Powered by Django.</div>
+    </footer>
+
+    <script>
+        function toggleCartDrawer() {
+            document.getElementById('cart-drawer').classList.toggle('active');
+            document.getElementById('cart-overlay').classList.toggle('active');
+        }
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

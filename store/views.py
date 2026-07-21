@@ -3,15 +3,16 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseRedirect
 from django.conf import settings
 from django.db.models import Q
-from .models import Category, Product
+from .models import Category, Product, HeroSlide
 from .cart import Cart
 
-# 1. product search, list and filter
+# ১. প্রোডাক্ট লিস্ট, সার্চ ও ফিল্টার
 def product_list(request, category_slug=None):
     category = None
     categories = Category.objects.all()
     products = Product.objects.filter(is_available=True)
     query = request.GET.get('q', '').strip()
+    slides = HeroSlide.objects.filter(is_active=True)
 
     if category_slug:
         category = get_object_or_404(Category, slug=category_slug)
@@ -27,14 +28,15 @@ def product_list(request, category_slug=None):
         'categories': categories,
         'products': products,
         'query': query,
+        'slides': slides,
     })
 
-# 2. product details page
+# ২. প্রোডাক্ট ডিটেইলস পেজ
 def product_detail(request, slug):
     product = get_object_or_404(Product, slug=slug, is_available=True)
     return render(request, 'store/product_detail.html', {'product': product})
 
-# 3. added cart
+# ৩. কার্টে যোগ করা
 def cart_add(request, product_id):
     cart = Cart(request)
     product = get_object_or_404(Product, id=product_id)
@@ -44,13 +46,13 @@ def cart_add(request, product_id):
         cart.add(product=product, size_name=size_name, quantity=quantity)
     return redirect(request.META.get('HTTP_REFERER', 'store:product_list'))
 
-# 4. remove frome cart
+# ৪. কার্ট থেকে রিমুভ করা
 def cart_remove(request, item_key):
     cart = Cart(request)
     cart.remove(item_key)
     return redirect(request.META.get('HTTP_REFERER', 'store:product_list'))
 
-# 5. messenger bKash cheakout link generator
+# ৫. মেসেঞ্জার bKash চেকআউট লিঙ্ক জেনারেটর
 def messenger_checkout(request):
     cart = Cart(request)
     if len(cart) == 0:
