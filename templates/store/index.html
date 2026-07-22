@@ -107,14 +107,32 @@
         position: relative;
         z-index: 2;
         overflow: hidden;
+        background: #F0EFEA;
+    }
+
+    .slide-blur-bg {
+        position: absolute;
+        top: -10%;
+        left: -10%;
+        width: 120%;
+        height: 120%;
+        background-size: cover;
+        background-position: center;
+        filter: blur(24px) brightness(0.95);
+        opacity: 0.4;
+        z-index: 1;
+        pointer-events: none;
     }
 
     /* Auto-fit properties to support any uploaded image size nicely */
     .hero-model-img {
-        height: 100%;
-        width: 100%;
-        object-fit: cover; /* Resizes and crops to fit the 520px height perfectly without stretching */
-        object-position: center; /* Focuses the center of the image */
+        position: relative;
+        z-index: 2;
+        max-height: 100%;
+        max-width: 100%;
+        width: auto;
+        height: auto;
+        object-fit: contain; /* Resizes to fit the container without cutting anything */
     }
 
     /* SECTION HEADER & TABS */
@@ -270,12 +288,14 @@
                     {% if slides %}
                         {% for slide in slides %}
                             <div class="carousel-slide">
+                                <div class="slide-blur-bg" style="background-image: url('{{ slide.image.url }}');"></div>
                                 <img src="{{ slide.image.url }}" alt="Slide Image" class="hero-model-img">
                             </div>
                         {% endfor %}
                     {% else %}
                         <!-- Fallback static image if no slides in DB -->
                         <div class="carousel-slide">
+                            <div class="slide-blur-bg" style="background-image: url('https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80');"></div>
                             <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80" alt="VELORA Model" class="hero-model-img">
                         </div>
                     {% endif %}
