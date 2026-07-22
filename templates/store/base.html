@@ -362,7 +362,9 @@
                 <input type="text" name="q" value="{{ query|default:'' }}" placeholder="Search products..." class="search-input">
             </form>
 
+            {% if request.user.is_authenticated and request.user.is_staff %}
             <a href="/admin/" style="font-size: 14px; font-weight: 500;"><i class="fa-regular fa-user"></i> Admin</a>
+            {% endif %}
             
             <button class="cart-btn" onclick="toggleCartDrawer()">
                 <i class="fa-solid fa-bag-shopping"></i> Cart
