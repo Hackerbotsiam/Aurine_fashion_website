@@ -61,7 +61,7 @@
 
         .nav-links {
             display: flex;
-            gap: 28px;
+            gap: 12px;
             align-items: center;
         }
 
@@ -69,11 +69,22 @@
             font-size: 14px;
             font-weight: 500;
             color: var(--text-main);
-            transition: color 0.2s;
+            padding: 8px 18px;
+            border-radius: 20px;
+            transition: all 0.2s ease-in-out;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .nav-links a:hover {
-            color: var(--sage-primary);
+            background-color: #000000;
+            color: #FFFFFF;
+        }
+
+        .nav-links a:active {
+            background-color: #C5A880; /* Gold color */
+            color: #FFFFFF;
         }
 
         .brand-logo {
