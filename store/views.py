@@ -15,7 +15,10 @@ def product_list(request, category_slug=None):
     slides = HeroSlide.objects.filter(is_active=True)
 
     if category_slug:
-        category = get_object_or_404(Category, slug=category_slug)
+        category, created = Category.objects.get_or_create(
+            slug=category_slug,
+            defaults={'name': category_slug.replace('-', ' ').title()}
+        )
         products = products.filter(category=category)
 
     if query:

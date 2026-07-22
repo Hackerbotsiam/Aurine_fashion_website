@@ -357,6 +357,12 @@
                         </div>
                     </div>
                 </div>
+            {% empty %}
+                <div class="no-products-message" style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border-color); color: var(--text-muted); width: 100%;">
+                    <i class="fa-solid fa-box-open" style="font-size: 48px; margin-bottom: 16px; color: var(--text-muted); opacity: 0.6;"></i>
+                    <h3 style="font-size: 20px; font-weight: 600; color: var(--text-main); margin-bottom: 8px;">Products not available</h3>
+                    <p style="font-size: 14px;">We are currently updating our collection. Please check back later!</p>
+                </div>
             {% endfor %}
         </div>
     </section>
